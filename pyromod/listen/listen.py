@@ -24,8 +24,6 @@ import pyrogram
 from enum import Enum
 from ..utils import patch, patchable, PyromodConfig
 
-loop = asyncio.get_event_loop()
-
 
 class ListenerStopped(Exception):
     pass
@@ -54,6 +52,7 @@ class Client:
         filters=None,
         listener_type=ListenerTypes.MESSAGE,
         timeout=None,
+        loop=asyncio.get_event_loop(),
         unallowed_click_alert=True,
     ):
         if type(listener_type) != ListenerTypes:
@@ -93,12 +92,13 @@ class Client:
         filters=None,
         listener_type=ListenerTypes.MESSAGE,
         timeout=None,
+        loop=asyncio.get_event_loop(),
         *args,
         **kwargs
     ):
         request = await self.send_message(identifier[0], text, *args, **kwargs)
         response = await self.listen(
-            identifier, filters, listener_type, timeout
+            identifier, filters, listener_type, timeout, loop
         )
         if response:
             response.request = request
